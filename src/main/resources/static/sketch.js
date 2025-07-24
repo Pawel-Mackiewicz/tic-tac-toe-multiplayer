@@ -44,8 +44,10 @@ function mousePressed() {
   if (board[idx] !== null) return;
 
   movePending = true;
+  console.log("gameId: ", gameId);
+  const destination = "/app/game/" + gameId + "/move";
   client.publish({
-    destination: `/app/game/${gameId}/move`,
+    destination: destination,
     body: JSON.stringify({ row: j, col: i })
   });
 }
@@ -58,16 +60,14 @@ function keyPressed() {
   }
 }
 
-function initNetworking() {
-    //add the server url here, then it should work
-  socket = new SockJS('http://<your-server>/ws');
-
-  client = new StompJs.Client({
-    webSocketFactory: () => socket,
-    reconnectDelay: 5000,
-    heartbeatIncoming: 4000,
-    heartbeatOutgoing: 4000,
-    debug: msg => console.log('[STOMP]', msg),
+  function initNetworking() {
+    // Directly configure the client with the WebSocket URL
+    client = new StompJs.Client({
+      brokerURL: 'ws://localhost:8080/ws', // <-- USE THIS INSTEAD OF webSocketFactory
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+      debug: msg => console.log('[STOMP]', msg),
 
     onConnect: () => {
       console.log('STOMP connected');
