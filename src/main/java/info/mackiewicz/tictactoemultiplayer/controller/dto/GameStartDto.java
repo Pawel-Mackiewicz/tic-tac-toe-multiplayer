@@ -6,11 +6,11 @@ import java.util.UUID;
 
 public record GameStartDto(
         String type,
-        UUID gameId,
+        String gameId,
         GamePiece symbol,
         GamePiece turn
 ) {
-    public GameStartDto(UUID gameId, GamePiece symbol, GamePiece turn) {
+    public GameStartDto(String gameId, GamePiece symbol, GamePiece turn) {
         this("GAME_START", gameId, symbol, turn);
     }
 }

@@ -145,13 +145,13 @@ public class GameService {
         gameRepository.save(newGame);
 
         GameStartDto firstPlayerPayload = new GameStartDto(
-                newGame.getGameId(),
+                newGame.getGameId().toString(),
                 firstPlayer.symbol(),
                 newGame.getCurrentTurn()
         );
 
         GameStartDto secondPlayerPayload = new GameStartDto(
-                newGame.getGameId(),
+                newGame.getGameId().toString(),
                 secondPlayer.symbol(),
                 newGame.getCurrentTurn()
         );

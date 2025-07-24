@@ -85,9 +85,11 @@ function keyPressed() {
 }
 
 function onPrivateMessage(msg) {
+  console.log("Inside onPrivateMessage()");
   const data = JSON.parse(msg.body);
-
   if (data.type === 'GAME_START') {
+    console.log("GAME_START! Setting gameId etc...");
+
     gameId      = data.gameId;
     mySymbol    = data.symbol;
     currentTurn = data.turn;
