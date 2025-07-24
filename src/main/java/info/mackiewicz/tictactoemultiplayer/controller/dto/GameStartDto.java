@@ -2,9 +2,11 @@ package info.mackiewicz.tictactoemultiplayer.controller.dto;
 
 import info.mackiewicz.tictactoemultiplayer.model.GamePiece;
 
+import java.util.UUID;
+
 public record GameStartDto(
-        String gameId,
+        UUID gameId,
         GamePiece symbol,
-        String turn
+        GamePiece turn
 ) {
 }

@@ -5,29 +5,34 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class GameRepository {
-    private final Map<String, Game> gamesById = new ConcurrentHashMap<>();
-    private final Map<String, String> sessionsToGameId = new ConcurrentHashMap<>();
+    private final Map<UUID, Game> gamesById = new ConcurrentHashMap<>();
+    private final Map<String, UUID> sessionsToGameId = new ConcurrentHashMap<>();
 
-    public void save(Game game) {
+    public Game save(Game game) {
         gamesById.put(game.getGameId(), game);
         sessionsToGameId.put(game.getPlayerO().sessionId(), game.getGameId());
         sessionsToGameId.put(game.getPlayerX().sessionId(), game.getGameId());
+
+        return game;
     }
 
-    public Optional<Game> findById(String gameId) {
+    public Optional<Game> findById(UUID gameId) {
         return Optional.ofNullable(gamesById.get(gameId));
     }
 
     public Optional<Game> findBySessionId(String sessionId) {
-        String gameId = sessionsToGameId.get(sessionId);
+        UUID gameId = sessionsToGameId.get(sessionId);
         return findById(gameId);
     }
 
-    public void remove(String gameId) {
+    public void remove(UUID gameId) {
+        if (gameId == null) return;
+
         var game = gamesById.get(gameId);
 
         gamesById.remove(gameId);

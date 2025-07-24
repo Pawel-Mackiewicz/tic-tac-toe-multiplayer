@@ -2,9 +2,11 @@ package info.mackiewicz.tictactoemultiplayer.model;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class Game {
-    private final String gameId;
+    private final UUID gameId;
     private final Player playerX;
     private final Player playerO; //(this isnt 0/zero, it represents circle in tic-tac-toe)
     private String[][] board;
@@ -14,7 +16,7 @@ public class Game {
     private boolean isDraw;
 
 
-    public Game(String gameId, Player playerX, Player playerO) {
+    public Game(UUID gameId, Player playerX, Player playerO) {
         this.gameId = gameId;
         this.playerX = playerX;
         this.playerO = playerO;
