@@ -1,9 +1,6 @@
 package info.mackiewicz.tictactoemultiplayer.service;
 
-import info.mackiewicz.tictactoemultiplayer.controller.dto.ErrorDto;
-import info.mackiewicz.tictactoemultiplayer.controller.dto.GameOverDto;
-import info.mackiewicz.tictactoemultiplayer.controller.dto.GameStartDto;
-import info.mackiewicz.tictactoemultiplayer.controller.dto.MakeMoveDto;
+import info.mackiewicz.tictactoemultiplayer.controller.dto.*;
 import info.mackiewicz.tictactoemultiplayer.model.Game;
 import info.mackiewicz.tictactoemultiplayer.model.GamePiece;
 import info.mackiewicz.tictactoemultiplayer.model.GameStatus;
@@ -85,6 +82,7 @@ public class GameService {
                     USER_QUEUE_PRIVATE_TOPIC,
                     new ErrorDto("Wrong move! This cell is already occupied.")
             );
+            return;
         }
         log.info("All validation passed! Move valid.");
         //Getting game board and putting player symbol
@@ -102,9 +100,13 @@ public class GameService {
         }
         game.setCurrentTurn(otherPlayer.symbol());
         gameRepository.save(game);
+
+       publishGameState(game);
    }
 
-   public void handleDisconnect(String sessionId) {
+
+
+    public void handleDisconnect(String sessionId) {
         //if the disconnecting player was the one waiting, clear the waiting spot
         if (waitingPlayerSessionId.compareAndSet(sessionId, null)) return;
 
@@ -161,10 +163,9 @@ public class GameService {
        game.setStatus(GameStatus.FINISHED);
        game.setWinner(winner);
 
-       var payload = new GameOverDto(game.getBoard(), game.getWinner().toString());
-       messagingTemplate.convertAndSend(GAME_TOPIC + game.getGameId().toString(), payload);
+        publishGameOver(game);
 
-       gameRepository.remove(game.getGameId());
+        gameRepository.remove(game.getGameId());
     }
 
     private void endGame(Game game, String winner) {
@@ -218,5 +219,16 @@ public class GameService {
         }
         // No empty cells were found
         return true;
+    }
+
+    private void publishGameState(Game game) {
+        var payload = new GameStateDto(game.getBoard(), game.getCurrentTurn());
+
+        messagingTemplate.convertAndSend(GAME_TOPIC + game.getGameId().toString(), payload);
+    }
+
+    private void publishGameOver(Game game) {
+        var payload = new GameOverDto(game.getBoard(), game.getWinner().toString());
+        messagingTemplate.convertAndSend(GAME_TOPIC + game.getGameId().toString(), payload);
     }
 }
