@@ -59,6 +59,7 @@ function keyPressed() {
 }
 
 function initNetworking() {
+    //add the server url here, then it should work
   socket = new SockJS('http://<your-server>/ws');
 
   client = new StompJs.Client({
